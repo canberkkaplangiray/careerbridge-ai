@@ -125,9 +125,10 @@ export async function POST(request) {
 
     // Try multiple models in order - different models have separate quota pools
     const modelCandidates = [
-      "gemini-2.0-flash-lite",
+      "gemini-2.5-flash",
       "gemini-2.5-flash-lite",
       "gemini-2.0-flash",
+      "gemini-2.0-flash-lite",
     ];
 
     let responseText;
@@ -154,8 +155,7 @@ export async function POST(request) {
         lastError = err;
         console.warn(`Model ${modelName} failed: ${err.message?.substring(0, 100)}`);
         if (err.message?.includes("429") || err.message?.includes("quota")) {
-          // Rate limited - try next model
-          await new Promise((r) => setTimeout(r, 2000));
+          // Rate limited - try next model immediately to avoid serverless timeout
           continue;
         }
         if (err.message?.includes("404") || err.message?.includes("not found")) {
