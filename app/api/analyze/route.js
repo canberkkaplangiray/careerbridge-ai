@@ -26,53 +26,84 @@ async function parseFileToText(file) {
     return result.value;
   }
 
-  throw new Error("Desteklenmeyen dosya formatı. PDF, DOCX veya TXT kullanın.");
+  throw new Error("Desteklenmeyen dosya formatÄ±. PDF, DOCX veya TXT kullanÄ±n.");
 }
 
 // Build the analysis prompt
 function buildAnalysisPrompt(cvText, jobDescription) {
-  return `Sen, kariyer danışmanlığı ve CV analizi konusunda uzman bir yapay zeka asistanısın. Sana bir kişinin CV'si ve başvurmak istediği bir iş ilanı verilecek. Görevin, bu ikisini derinlemesine analiz edip aşağıdaki yapıda JSON formatında yanıt üretmektir.
+  return `Sen, kariyer danÄ±ÅŸmanlÄ±ÄŸÄ± ve CV analizi konusunda uzman bir yapay zeka asistanÄ±sÄ±n. Sana bir kiÅŸinin CV'si ve baÅŸvurmak istediÄŸi bir iÅŸ ilanÄ± verilecek. GÃ¶revin, bu ikisini derinlemesine analiz edip aÅŸaÄŸÄ±daki yapÄ±da JSON formatÄ±nda yanÄ±t Ã¼retmektir.
 
 ## CV Metni:
 ${cvText}
 
-## İş İlanı:
+## Ä°ÅŸ Ä°lanÄ±:
 ${jobDescription}
 
-## Görevlerin:
+## GÃ¶revlerin:
 
-1. **Uyumluluk Skoru**: CV ile ilan arasındaki genel uyumluluğu 0-100 arası puanla.
-2. **Skor Dağılımı**: Teknik beceriler, iş deneyimi, eğitim ve yumuşak beceriler bazında ayrı ayrı puanla.
-3. **Eşleşen Yetenekler**: İlanda aranan ve CV'de bulunan becerileri listele. Her biri için güven seviyesi ("Yüksek" veya "Orta") ve CV'den kanıt belirt.
-4. **Eksik Yetenekler**: İlanda aranan ama CV'de eksik olan becerileri listele. Her biri için önem derecesi ("Kritik" veya "Orta") ve geliştirme önerisi yaz.
-5. **Stratejik Tavsiye**: Adaya özel, uygulanabilir tavsiyeler yaz. CV'deki hangi projelerin öne çıkarılması gerektiğini, eksik becerilerin nasıl telafi edileceğini, cover letter önerilerini ve mülakat hazırlık ipuçlarını içersin. Bu bölüm detaylı ve kişiselleştirilmiş olmalı. Türkçe yaz.
+1. **Uyumluluk Skoru**: CV ile ilan arasÄ±ndaki genel uyumluluÄŸu 0-100 arasÄ± puanla.
+2. **Skor DaÄŸÄ±lÄ±mÄ±**: Teknik beceriler, iÅŸ deneyimi, eÄŸitim ve yumuÅŸak beceriler bazÄ±nda ayrÄ± ayrÄ± puanla.
+3. **EÅŸleÅŸen Yetenekler**: Ä°landa aranan ve CV'de bulunan becerileri listele. Her biri iÃ§in gÃ¼ven seviyesi ("YÃ¼ksek" veya "Orta") ve CV'den kanÄ±t belirt.
+4. **Eksik Yetenekler**: Ä°landa aranan ama CV'de eksik olan becerileri listele. Her biri iÃ§in Ã¶nem derecesi ("Kritik" veya "Orta") ve geliÅŸtirme Ã¶nerisi yaz.
+5. **Stratejik Tavsiye**: Adaya Ã¶zel, uygulanabilir tavsiyeler yaz. CV'deki hangi projelerin Ã¶ne Ã§Ä±karÄ±lmasÄ± gerektiÄŸini, eksik becerilerin nasÄ±l telafi edileceÄŸini, cover letter Ã¶nerilerini ve mÃ¼lakat hazÄ±rlÄ±k ipuÃ§larÄ±nÄ± iÃ§ersin. Bu bÃ¶lÃ¼m detaylÄ± ve kiÅŸiselleÅŸtirilmiÅŸ olmalÄ±. TÃ¼rkÃ§e yaz.
 
-## ZORUNLU JSON FORMATI (başka hiçbir şey yazma, sadece JSON döndür):
+## ZORUNLU JSON FORMATI (baÅŸka hiÃ§bir ÅŸey yazma, sadece JSON dÃ¶ndÃ¼r):
 
 {
-  "compatibilityScore": <sayı, 0-100>,
+  "compatibilityScore": <sayÄ±, 0-100>,
   "scoreBreakdown": {
-    "technicalFit": <sayı, 0-100>,
-    "experienceFit": <sayı, 0-100>,
-    "educationFit": <sayı, 0-100>,
-    "softSkillsFit": <sayı, 0-100>
+    "technicalFit": <sayÄ±, 0-100>,
+    "experienceFit": <sayÄ±, 0-100>,
+    "educationFit": <sayÄ±, 0-100>,
+    "softSkillsFit": <sayÄ±, 0-100>
   },
   "matchingSkills": [
     {
-      "skill": "<beceri adı>",
-      "confidence": "<Yüksek veya Orta>",
-      "evidence": "<CV'den kanıt>"
+      "skill": "<beceri adÄ±>",
+      "confidence": "<YÃ¼ksek veya Orta>",
+      "evidence": "<CV'den kanÄ±t>"
     }
   ],
   "missingSkills": [
     {
-      "skill": "<beceri adı>",
+      "skill": "<beceri adÄ±>",
       "importance": "<Kritik veya Orta>",
-      "suggestion": "<geliştirme önerisi>"
+      "suggestion": "<geliÅŸtirme Ã¶nerisi>"
     }
   ],
-  "strategicAdvice": "<detaylı, kişiselleştirilmiş tavsiye metni, birden fazla paragraf>"
+  "strategicAdvice": "<detaylÄ±, kiÅŸiselleÅŸtirilmiÅŸ tavsiye metni, birden fazla paragraf>"
 }`;
+}
+
+function extractJsonObject(text) {
+  const cleaned = text
+    .trim()
+    .replace(/^```(?:json)?/i, "")
+    .replace(/```$/i, "")
+    .trim();
+
+  const firstBrace = cleaned.indexOf("{");
+  const lastBrace = cleaned.lastIndexOf("}");
+
+  if (firstBrace === -1 || lastBrace === -1 || lastBrace <= firstBrace) {
+    throw new Error("AI yaniti JSON icermiyor.");
+  }
+
+  return cleaned.slice(firstBrace, lastBrace + 1);
+}
+
+function removeTrailingCommas(jsonText) {
+  return jsonText.replace(/,\s*([}\]])/g, "$1");
+}
+
+function parseAnalysisJson(responseText) {
+  const jsonText = extractJsonObject(responseText);
+
+  try {
+    return JSON.parse(jsonText);
+  } catch {
+    return JSON.parse(removeTrailingCommas(jsonText));
+  }
 }
 
 export async function POST(request) {
@@ -85,7 +116,7 @@ export async function POST(request) {
     // Validate input
     if (!jobDescription.trim()) {
       return NextResponse.json(
-        { error: "İş ilanı metni gereklidir." },
+        { error: "Ä°ÅŸ ilanÄ± metni gereklidir." },
         { status: 400 }
       );
     }
@@ -97,7 +128,7 @@ export async function POST(request) {
         cvText = fileText + (cvText ? "\n\n" + cvText : "");
       } catch (err) {
         return NextResponse.json(
-          { error: `Dosya okuma hatası: ${err.message}` },
+          { error: `Dosya okuma hatasÄ±: ${err.message}` },
           { status: 400 }
         );
       }
@@ -105,7 +136,7 @@ export async function POST(request) {
 
     if (!cvText.trim()) {
       return NextResponse.json(
-        { error: "CV metni veya dosyası gereklidir." },
+        { error: "CV metni veya dosyasÄ± gereklidir." },
         { status: 400 }
       );
     }
@@ -114,10 +145,60 @@ export async function POST(request) {
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
       return NextResponse.json(
-        { error: "Gemini API anahtarı yapılandırılmamış. .env.local dosyasına GEMINI_API_KEY ekleyin." },
+        { error: "Gemini API anahtarÄ± yapÄ±landÄ±rÄ±lmamÄ±ÅŸ. .env.local dosyasÄ±na GEMINI_API_KEY ekleyin." },
         { status: 500 }
       );
     }
+
+    // Define strict JSON schema for Gemini response to ensure zero JSON parse errors
+    const responseSchema = {
+      type: "OBJECT",
+      properties: {
+        compatibilityScore: { type: "INTEGER" },
+        scoreBreakdown: {
+          type: "OBJECT",
+          properties: {
+            technicalFit: { type: "INTEGER" },
+            experienceFit: { type: "INTEGER" },
+            educationFit: { type: "INTEGER" },
+            softSkillsFit: { type: "INTEGER" }
+          },
+          required: ["technicalFit", "experienceFit", "educationFit", "softSkillsFit"]
+        },
+        matchingSkills: {
+          type: "ARRAY",
+          items: {
+            type: "OBJECT",
+            properties: {
+              skill: { type: "STRING" },
+              confidence: { type: "STRING" },
+              evidence: { type: "STRING" }
+            },
+            required: ["skill", "confidence", "evidence"]
+          }
+        },
+        missingSkills: {
+          type: "ARRAY",
+          items: {
+            type: "OBJECT",
+            properties: {
+              skill: { type: "STRING" },
+              importance: { type: "STRING" },
+              suggestion: { type: "STRING" }
+            },
+            required: ["skill", "importance", "suggestion"]
+          }
+        },
+        strategicAdvice: { type: "STRING" }
+      },
+      required: [
+        "compatibilityScore",
+        "scoreBreakdown",
+        "matchingSkills",
+        "missingSkills",
+        "strategicAdvice"
+      ]
+    };
 
     // Call Gemini API with model fallback chain
     const genAI = new GoogleGenerativeAI(apiKey);
@@ -140,14 +221,17 @@ export async function POST(request) {
         const model = genAI.getGenerativeModel({
           model: modelName,
           generationConfig: {
-            temperature: 0.7,
+            temperature: 0.2,
             topP: 0.9,
-            maxOutputTokens: 4096,
+            maxOutputTokens: 8192,
             responseMimeType: "application/json",
+            responseSchema: responseSchema,
           },
         });
         const result = await model.generateContent(prompt);
-        responseText = result.response.text();
+        const candidateText = result.response.text();
+        parseAnalysisJson(candidateText);
+        responseText = candidateText;
         lastError = null;
         console.log(`Success with model: ${modelName}`);
         break;
@@ -169,22 +253,20 @@ export async function POST(request) {
 
     if (lastError || !responseText) {
       throw new Error(
-        "Tüm AI modelleri şu an meşgul. Lütfen 1 dakika bekleyip tekrar deneyin."
+        "TÃ¼m AI modelleri ÅŸu an meÅŸgul. LÃ¼tfen 1 dakika bekleyip tekrar deneyin."
       );
     }
 
     // Parse JSON response
     let analysisResult;
     try {
-      analysisResult = JSON.parse(responseText);
-    } catch {
-      // Try extracting JSON from response
-      const jsonMatch = responseText.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        analysisResult = JSON.parse(jsonMatch[0]);
-      } else {
-        throw new Error("AI yanıtı geçerli bir JSON formatında değil.");
-      }
+      analysisResult = parseAnalysisJson(responseText);
+    } catch (err) {
+      console.error("Invalid AI JSON response:", {
+        error: err.message,
+        preview: responseText?.slice(0, 500),
+      });
+      throw new Error("AI yaniti beklenen formatta gelmedi. Lutfen tekrar deneyin.");
     }
 
     // Validate and ensure required fields
@@ -205,7 +287,7 @@ export async function POST(request) {
   } catch (error) {
     console.error("Analysis error:", error);
     return NextResponse.json(
-      { error: error.message || "Analiz sırasında beklenmeyen bir hata oluştu." },
+      { error: error.message || "Analiz sÄ±rasÄ±nda beklenmeyen bir hata oluÅŸtu." },
       { status: 500 }
     );
   }
